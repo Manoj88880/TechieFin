@@ -13,6 +13,7 @@ export default function Home() {
     const q = query(collection(db, "transactions"), orderBy("date", "desc"));
     const snapshot = await getDocs(q);
     const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    console.log("Transactions fetched:", data);
     setTransactions(data);
   };
 
@@ -25,7 +26,7 @@ export default function Home() {
       <h1 className="text-3xl font-bold mb-6 text-center">💰 Finance Tracker</h1>
       <Summary transactions={transactions} />
       <AddTransaction onAdd={fetchTransactions} />
-      <TransactionList transactions={transactions} />
+      <TransactionList transactions={transactions} onDelete={fetchTransactions} />
     </main>
   );
 }

@@ -1,68 +1,48 @@
-"use client";
-import { useState } from "react";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { doc, deleteDoc } from "firebase/firestore";
 
-export default function AddTransaction({ onAdd }) {
-  const [title, setTitle] = useState("");
-  const [amount, setAmount] = useState("");
-  const [type, setType] = useState("income");
-
-  const handleSubmit = async () => {
-    if (!title || !amount) return;
-
-    console.log("Button clicked!", title, amount);
-
-    const transaction = {
-      title,
-      amount: parseFloat(amount),
-      type,
-      date: Timestamp.now(),
-    };
-
-    try {
-      await addDoc(collection(db, "transactions"), transaction);
-      console.log("✅ Saved to Firebase successfully!");
-      setTitle("");
-      setAmount("");
-      onAdd();
-    } catch (error) {
-      console.error("❌ Firebase Error:", error.message);
-    }
+export default function TransactionList({ transactions, onDelete }) {
+  const handleDelete = async (id) => {
+    await deleteDoc(doc(db, "transactions", id));
+    onDelete();
   };
 
   return (
-    <div className="bg-gray-800 p-4 rounded-xl mb-6">
-      <h2 className="text-lg font-semibold mb-3">Add Transaction</h2>
-      <div className="flex flex-col gap-3">
-        <input
-          className="bg-gray-700 p-2 rounded-lg outline-none"
-          placeholder="Title (e.g. Salary, Rent)"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          className="bg-gray-700 p-2 rounded-lg outline-none"
-          placeholder="Amount (₹)"
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        />
-        <select
-          className="bg-gray-700 p-2 rounded-lg outline-none"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-        >
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-        </select>
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-600 hover:bg-blue-700 p-2 rounded-lg font-semibold"
-        >
-          + Add
-        </button>
-      </div>
+    <div className="bg-gray-800 p-4 rounded-xl">
+      <h2 className="text-lg font-semibold mb-3">Transactions</h2>
+      {transactions.length === 0 && (
+        <p className="text-gray-400">No transactions yet!</p>
+      )}
+      <ul className="flex flex-col gap-2">
+        {transactions.map((t) => (
+          <li
+            key={t.id}
+            className="flex justify-between items-center bg-gray-700 p-3 rounded-lg"
+          >
+            <div>
+              <p className="font-medium">{t.title}</p>
+              <p className="text-xs text-gray-400">
+                {t.date?.toDate().toLocaleDateString()}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <span
+                className={`font-bold text-lg ${
+                  t.type === "income" ? "text-green-400" : "text-red-400"
+                }`}
+              >
+                {t.type === "income" ? "+" : "-"}₹{t.amount}
+              </span>
+              <button
+                onClick={() => handleDelete(t.id)}
+                className="bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1 rounded-lg"
+              >
+                🗑️
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
