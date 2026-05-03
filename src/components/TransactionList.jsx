@@ -1,3 +1,4 @@
+"use client";
 import { db } from "@/lib/firebase";
 import { doc, deleteDoc } from "firebase/firestore";
 
@@ -6,6 +7,8 @@ export default function TransactionList({ transactions, onDelete }) {
     await deleteDoc(doc(db, "transactions", id));
     onDelete();
   };
+
+  console.log("Transactions in list:", transactions); // debug log
 
   return (
     <div className="bg-gray-800 p-4 rounded-xl">
