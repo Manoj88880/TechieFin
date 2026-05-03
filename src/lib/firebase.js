@@ -2,12 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC5XDs_y7Bl-zn08ZJEh4Gup4mXaZHctD8",
-  authDomain: "finance-tracker-30070.firebaseapp.com",
-  projectId: "finance-tracker-30070",
-  storageBucket: "finance-tracker-30070.firebasestorage.app",
-  messagingSenderId: "248187683150",
-  appId: "1:248187683150:web:c5fd46f89b2c357fc3de1f"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
