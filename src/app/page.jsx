@@ -8,6 +8,7 @@ import AddTransaction from "@/components/AddTransaction";
 import TransactionList from "@/components/TransactionList";
 import Chart from "@/components/Chart";
 import Login from "@/components/Login";
+import AIAdvice from "@/components/AIAdvice";
 
 export default function Home() {
   const [transactions, setTransactions] = useState([]);
@@ -36,6 +37,7 @@ export default function Home() {
         <>
           <Summary transactions={transactions} />
           <Chart transactions={transactions} />
+          <AIAdvice transactions={transactions} />
           <AddTransaction onAdd={fetchTransactions} />
           <TransactionList transactions={transactions} onDelete={fetchTransactions} />
         </>
