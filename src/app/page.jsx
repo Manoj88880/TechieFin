@@ -10,6 +10,10 @@ import Chart from "@/components/Chart";
 import Login from "@/components/Login";
 import AIAdvice from "@/components/AIAdvice";
 import HealthScore from "@/components/HealthScore";
+import FuturePredictor from "@/components/FuturePredictor";
+import SplitBill from "@/components/SplitBill";
+import MoodTracker from "@/components/MoodTracker";
+import SavingsChallenge from "@/components/SavingsChallenge";
 
 export default function Home() {
   const [transactions, setTransactions] = useState([]);
@@ -34,12 +38,14 @@ export default function Home() {
     <main className="max-w-xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6 text-center">💰 Finance Tracker</h1>
       <Login user={user} />
-      <div className="bg-red-500 p-4 rounded-xl mb-6">TEST</div>
       {user ? (
         <>
           <Summary transactions={transactions} />
-          <div className="bg-red-500 p-4 rounded-xl mb-6">HEALTH SCORE TEST</div>
           <HealthScore transactions={transactions} />
+          <FuturePredictor transactions={transactions} />
+          <MoodTracker />
+          <SavingsChallenge />
+          <SplitBill />
           <Chart transactions={transactions} />
           <AIAdvice transactions={transactions} />
           <AddTransaction onAdd={fetchTransactions} />
