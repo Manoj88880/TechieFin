@@ -1,69 +1,73 @@
 "use client";
 import { useState } from "react";
 
-export default function AIAdvice({ transactions }) {
+export default function AIAdvice({ transactions = [] }) {
   const [advice, setAdvice] = useState([]);
   const [shown, setShown] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const getAdvice = () => {
-    const income = transactions
-      .filter((t) => t.type === "income")
-      .reduce((a, b) => a + b.amount, 0);
+  const getAdvice = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // Calculate totals safely
+      const income = transactions
+        .filter((t) => t.type === "income")
+        .reduce((a, b) => a + Number(b.amount || 0), 0);
 
-    const expense = transactions
-      .filter((t) => t.type === "expense")
-      .reduce((a, b) => a + b.amount, 0);
+      const expense = transactions
+        .filter((t) => t.type === "expense")
+        .reduce((a, b) => a + Number(b.amount || 0), 0);
 
-    const balance = income - expense;
-    const savingRate = income > 0 ? ((balance / income) * 100).toFixed(1) : 0;
-    const tips = [];
+      const balance = income - expense;
 
-    // Tip 1 — Saving Rate
-    if (savingRate < 0) {
-      tips.push("🚨 You are spending more than you earn! Cut unnecessary expenses immediately.");
-    } else if (savingRate < 20) {
-      tips.push(`💡 Your saving rate is ${savingRate}%. Try to save at least 20% of your income.`);
-    } else {
-      tips.push(`✅ Great job! You are saving ${savingRate}% of your income. Keep it up!`);
+      // Fetch AI advice from API
+      const response = await fetch("/api/advice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ income, expense, balance, transactions }),
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch advice");
+
+      const data = await response.json();
+      const tips = data.advice || [];
+
+      setAdvice(tips);
+      setShown(true);
+    } catch (err) {
+      console.error("Error fetching advice:", err);
+      setError("Unable to get advice. Please try again.");
+    } finally {
+      setLoading(false);
     }
-
-    // Tip 2 — Expense vs Income
-    if (expense > income * 0.8) {
-      tips.push("⚠️ Your expenses are more than 80% of your income. Try to reduce spending on non-essentials.");
-    } else if (expense > income * 0.5) {
-      tips.push("📊 Your expenses are between 50-80% of income. Look for areas to cut back.");
-    } else {
-      tips.push("🎯 Your expenses are well under control. Consider investing your extra savings!");
-    }
-
-    // Tip 3 — Transaction Count
-    const expenseCount = transactions.filter((t) => t.type === "expense").length;
-    if (expenseCount > 10) {
-      tips.push("🛒 You have many expense transactions. Track your daily spending to find patterns.");
-    } else if (balance > 0) {
-      tips.push(`💰 You have ₹${balance} left. Consider putting it in a savings account or investment!`);
-    } else {
-      tips.push("📝 Add more transactions to get better financial insights!");
-    }
-
-    setAdvice(tips);
-    setShown(true);
   };
 
   return (
     <div className="bg-gray-800 p-4 rounded-xl mb-6">
       <h2 className="text-lg font-semibold mb-3">🤖 Smart Spending Advice</h2>
+
       <button
         onClick={getAdvice}
-        className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-lg w-full mb-3"
+        disabled={loading}
+        className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-semibold px-4 py-2 rounded-lg w-full mb-3"
       >
-        Get Smart Advice
+        {loading ? "Loading..." : "Get Smart Advice"}
       </button>
+
+      {error && (
+        <div className="bg-red-900 text-red-200 p-3 rounded-lg mb-3 text-sm">
+          {error}
+        </div>
+      )}
+
       {shown && (
         <ul className="flex flex-col gap-2">
           {advice.map((tip, index) => (
             <li
-              key={index}
+              key={`advice-${index}-${tip.substring(0, 10)}`}
               className="bg-gray-700 p-3 rounded-lg text-sm text-gray-200"
             >
               {tip}

@@ -6,9 +6,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import Summary from "@/components/Summary";
 import AddTransaction from "@/components/AddTransaction";
 import TransactionList from "@/components/TransactionList";
-import Chart from "@/components/Chart";
-import Login from "@/components/Login";
-import AIAdvice from "@/components/AIAdvice";
 
 export default function Home() {
   const [transactions, setTransactions] = useState([]);
@@ -32,18 +29,9 @@ export default function Home() {
   return (
     <main className="max-w-xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6 text-center">💰 Finance Tracker</h1>
-      <Login user={user} />
-      {user ? (
-        <>
-          <Summary transactions={transactions} />
-          <Chart transactions={transactions} />
-          <AIAdvice transactions={transactions} />
-          <AddTransaction onAdd={fetchTransactions} />
-          <TransactionList transactions={transactions} onDelete={fetchTransactions} />
-        </>
-      ) : (
-        <p className="text-center text-gray-400">Please login to see your transactions!</p>
-      )}
+      <Summary transactions={transactions} />
+      <AddTransaction onAdd={fetchTransactions} />
+      <TransactionList transactions={transactions} />
     </main>
   );
 }
