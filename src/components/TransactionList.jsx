@@ -2,17 +2,21 @@
 import { db } from "@/lib/firebase";
 import { doc, deleteDoc } from "firebase/firestore";
 
+const categoryEmoji = {
+  Salary: "💼", Freelance: "💻", Investment: "📈", Gift: "🎁",
+  Food: "🍔", Rent: "🏠", Travel: "✈️", Shopping: "🛒",
+  Entertainment: "🎬", Health: "💊", Education: "📚", Other: "📝",
+};
+
 export default function TransactionList({ transactions, onDelete }) {
   const handleDelete = async (id) => {
     await deleteDoc(doc(db, "transactions", id));
     onDelete();
   };
 
-  console.log("Transactions in list:", transactions); // debug log
-
   return (
     <div className="bg-gray-800 p-4 rounded-xl">
-      <h2 className="text-lg font-semibold mb-3">Transactions</h2>
+      <h2 className="text-lg font-semibold mb-3">📋 Transactions</h2>
       {transactions.length === 0 && (
         <p className="text-gray-400">No transactions yet!</p>
       )}
@@ -22,18 +26,19 @@ export default function TransactionList({ transactions, onDelete }) {
             key={t.id}
             className="flex justify-between items-center bg-gray-700 p-3 rounded-lg"
           >
-            <div>
-              <p className="font-medium">{t.title}</p>
-              <p className="text-xs text-gray-400">
-                {t.date?.toDate().toLocaleDateString()}
-              </p>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">
+                {categoryEmoji[t.category] || "📝"}
+              </span>
+              <div>
+                <p className="font-medium">{t.title}</p>
+                <p className="text-xs text-gray-400">
+                  {t.category} • {t.date?.toDate().toLocaleDateString()}
+                </p>
+              </div>
             </div>
             <div className="flex items-center gap-3">
-              <span
-                className={`font-bold text-lg ${
-                  t.type === "income" ? "text-green-400" : "text-red-400"
-                }`}
-              >
+              <span className={`font-bold text-lg ${t.type === "income" ? "text-green-400" : "text-red-400"}`}>
                 {t.type === "income" ? "+" : "-"}₹{t.amount}
               </span>
               <button

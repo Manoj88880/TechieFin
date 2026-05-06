@@ -14,6 +14,7 @@ import FuturePredictor from "@/components/FuturePredictor";
 import SplitBill from "@/components/SplitBill";
 import MoodTracker from "@/components/MoodTracker";
 import SavingsChallenge from "@/components/SavingsChallenge";
+import ExportPDF from "@/components/ExportPDF";
 
 export default function Home() {
   const [transactions, setTransactions] = useState([]);
@@ -48,6 +49,7 @@ export default function Home() {
           <SplitBill />
           <Chart transactions={transactions} />
           <AIAdvice transactions={transactions} />
+          <ExportPDF transactions={transactions} />
           <AddTransaction onAdd={fetchTransactions} />
           <TransactionList transactions={transactions} onDelete={fetchTransactions} />
         </>
