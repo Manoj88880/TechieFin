@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { db, auth } from "@/lib/firebase";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import Summary from "@/components/Summary";
 import AddTransaction from "@/components/AddTransaction";
@@ -15,22 +15,31 @@ import SplitBill from "@/components/SplitBill";
 import MoodTracker from "@/components/MoodTracker";
 import SavingsChallenge from "@/components/SavingsChallenge";
 import ExportPDF from "@/components/ExportPDF";
+import BudgetAlert from "@/components/BudgetAlert";
+import CurrencyConverter from "@/components/CurrencyConverter";
+import Accounts from "@/components/Accounts";
+import MonthlyReport from "@/components/MonthlyReport";
 
 export default function Home() {
   const [transactions, setTransactions] = useState([]);
   const [user, setUser] = useState(null);
 
-  const fetchTransactions = async () => {
-    const q = query(collection(db, "transactions"), orderBy("date", "desc"));
+  const fetchTransactions = async (currentUser) => {
+    if (!currentUser) return;
+    const q = query(
+      collection(db, "transactions"),
+      where("userId", "==", currentUser.uid),
+      orderBy("date", "desc")
+    );
     const snapshot = await getDocs(q);
     const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     setTransactions(data);
   };
 
   useEffect(() => {
-    fetchTransactions();
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      fetchTransactions(currentUser);
     });
     return () => unsubscribe();
   }, []);
@@ -42,16 +51,20 @@ export default function Home() {
       {user ? (
         <>
           <Summary transactions={transactions} />
+          <Accounts transactions={transactions} />
+          <BudgetAlert transactions={transactions} />
+          <MonthlyReport transactions={transactions} />
           <HealthScore transactions={transactions} />
           <FuturePredictor transactions={transactions} />
+          <CurrencyConverter />
           <MoodTracker />
           <SavingsChallenge />
           <SplitBill />
           <Chart transactions={transactions} />
           <AIAdvice transactions={transactions} />
           <ExportPDF transactions={transactions} />
-          <AddTransaction onAdd={fetchTransactions} />
-          <TransactionList transactions={transactions} onDelete={fetchTransactions} />
+          <AddTransaction onAdd={() => fetchTransactions(user)} user={user} />
+          <TransactionList transactions={transactions} onDelete={() => fetchTransactions(user)} />
         </>
       ) : (
         <p className="text-center text-gray-400">Please login to see your transactions!</p>

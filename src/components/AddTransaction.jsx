@@ -8,7 +8,7 @@ const CATEGORIES = {
   expense: ["Food", "Rent", "Travel", "Shopping", "Entertainment", "Health", "Education", "Other"],
 };
 
-export default function AddTransaction({ onAdd }) {
+export default function AddTransaction({ onAdd, user }) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("income");
@@ -20,12 +20,13 @@ export default function AddTransaction({ onAdd }) {
   };
 
   const handleSubmit = async () => {
-    if (!title || !amount) return;
+    if (!title || !amount || !user) return;
     const transaction = {
       title,
       amount: parseFloat(amount),
       type,
       category,
+      userId: user.uid,
       date: Timestamp.now(),
     };
     try {
