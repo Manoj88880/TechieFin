@@ -19,6 +19,12 @@ import BudgetAlert from "@/components/BudgetAlert";
 import CurrencyConverter from "@/components/CurrencyConverter";
 import Accounts from "@/components/Accounts";
 import MonthlyReport from "@/components/MonthlyReport";
+import EMICalculator from "@/components/EMICalculator";
+import GoalTracker from "@/components/GoalTracker";
+import BillReminders from "@/components/BillReminders";
+import SpendingInsights from "@/components/SpendingInsights";
+import RecurringTransactions from "@/components/RecurringTransactions";
+import Statistics from "@/components/Statistics";
 
 export default function Home() {
   const [transactions, setTransactions] = useState([]);
@@ -51,11 +57,17 @@ export default function Home() {
       {user ? (
         <>
           <Summary transactions={transactions} />
+          <Statistics transactions={transactions} />
           <Accounts transactions={transactions} />
           <BudgetAlert transactions={transactions} />
           <MonthlyReport transactions={transactions} />
+          <SpendingInsights transactions={transactions} />
           <HealthScore transactions={transactions} />
           <FuturePredictor transactions={transactions} />
+          <GoalTracker />
+          <BillReminders />
+          <EMICalculator />
+          <RecurringTransactions user={user} onAdd={() => fetchTransactions(user)} />
           <CurrencyConverter />
           <MoodTracker />
           <SavingsChallenge />
