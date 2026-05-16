@@ -27,6 +27,17 @@ import RecurringTransactions from "@/components/RecurringTransactions";
 import Statistics from "@/components/Statistics";
 import Profile from "@/components/Profile";
 import DailyTips from "@/components/DailyTips";
+import Achievements from "@/components/Achievements";
+import Chatbot from "@/components/Chatbot";
+import InvestmentAdvice from "@/components/InvestmentAdvice";
+import NewsFeed from "@/components/NewsFeed";
+import ReferFriend from "@/components/ReferFriend";
+import TaxCalculator from "@/components/TaxCalculator";
+import NetWorth from "@/components/NetWorth";
+import CashbackTracker from "@/components/CashbackTracker";
+import CarbonFootprint from "@/components/CarbonFootprint";
+import SupplyChain from "@/components/SupplyChain";
+import DemandPlanner from "@/components/DemandPlanner";
 
 export default function Home() {
   const [transactions, setTransactions] = useState([]);
@@ -79,7 +90,6 @@ export default function Home() {
 
   return (
     <main className="max-w-xl mx-auto pb-24">
-      {/* Header */}
       {activeTab !== "profile" && (
         <div
           className="p-6 mb-4"
@@ -101,13 +111,14 @@ export default function Home() {
         </div>
       )}
 
-      {/* Tab Content */}
       <div className="px-4">
         <DailyTips />
 
         {activeTab === "home" && (
           <>
             <BudgetAlert transactions={transactions} />
+            <NewsFeed />
+            <Chatbot transactions={transactions} />
             <AddTransaction onAdd={() => fetchTransactions(user)} user={user} />
             <RecurringTransactions user={user} onAdd={() => fetchTransactions(user)} />
             <TransactionList transactions={transactions} onDelete={() => fetchTransactions(user)} />
@@ -117,8 +128,13 @@ export default function Home() {
         {activeTab === "analytics" && (
           <>
             <Statistics transactions={transactions} />
+            <Achievements transactions={transactions} />
+            <NetWorth />
+            <CashbackTracker />
             <MonthlyReport transactions={transactions} />
             <SpendingInsights transactions={transactions} />
+            <CarbonFootprint transactions={transactions} />
+            <InvestmentAdvice transactions={transactions} />
             <Chart transactions={transactions} />
             <HealthScore transactions={transactions} />
             <FuturePredictor transactions={transactions} />
@@ -129,11 +145,14 @@ export default function Home() {
 
         {activeTab === "tools" && (
           <>
+            <TaxCalculator />
             <CurrencyConverter />
             <EMICalculator />
             <SplitBill />
             <MoodTracker />
             <BillReminders />
+            <SupplyChain />
+            <DemandPlanner />
           </>
         )}
 
@@ -142,6 +161,7 @@ export default function Home() {
             <GoalTracker />
             <SavingsChallenge />
             <Accounts transactions={transactions} />
+            <ReferFriend user={user} />
           </>
         )}
 
@@ -150,7 +170,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* Bottom Navigation */}
       <div
         className="fixed bottom-0 left-0 right-0 flex justify-around items-center p-3 z-50"
         style={{ backgroundColor: "#111827", borderTop: "1px solid #1f2937" }}
@@ -162,11 +181,7 @@ export default function Home() {
             className="flex flex-col items-center gap-1"
           >
             <span className="text-2xl">{tab.icon}</span>
-            <span
-              className={`text-xs font-semibold ${
-                activeTab === tab.id ? "text-purple-400" : "text-gray-500"
-              }`}
-            >
+            <span className={`text-xs font-semibold ${activeTab === tab.id ? "text-purple-400" : "text-gray-500"}`}>
               {tab.label}
             </span>
           </button>
