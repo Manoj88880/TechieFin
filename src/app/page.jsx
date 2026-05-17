@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import { db, auth } from "@/lib/firebase";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import Login from "@/components/Login";
 import Summary from "@/components/Summary";
 import AddTransaction from "@/components/AddTransaction";
@@ -38,6 +42,14 @@ import CashbackTracker from "@/components/CashbackTracker";
 import CarbonFootprint from "@/components/CarbonFootprint";
 import SupplyChain from "@/components/SupplyChain";
 import DemandPlanner from "@/components/DemandPlanner";
+import SalaryNegotiation from "@/components/SalaryNegotiation";
+import FinancialCoach from "@/components/FinancialCoach";
+import BusinessTracker from "@/components/BusinessTracker";
+import MarketOverview from "@/components/MarketOverview";
+import SecurityScore from "@/components/SecurityScore";
+import ExpenseSplitter from "@/components/ExpenseSplitter";
+import RiskAnalyzer from "@/components/RiskAnalyzer";
+import FinancialCalendar from "@/components/FinancialCalendar";
 
 export default function Home() {
   const [transactions, setTransactions] = useState([]);
@@ -74,63 +86,121 @@ export default function Home() {
 
   if (!user) {
     return (
-      <main className="max-w-xl mx-auto p-6 flex flex-col items-center justify-center min-h-screen">
-        <div
-          className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-4"
-          style={{ background: "linear-gradient(135deg, #6366f1, #ec4899)" }}
-        >
-          💰
+      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+        <div className="w-full max-w-md space-y-8">
+          {/* Logo Section */}
+          <div className="text-center space-y-4">
+            <div className="flex justify-center">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center text-5xl shadow-lg shadow-indigo-500/50">
+                💰
+              </div>
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold text-white">TechieFin</h1>
+              <p className="text-slate-400 text-sm mt-2">Your personal finance companion</p>
+            </div>
+          </div>
+
+          {/* Login Card */}
+          <Card className="border-slate-700 bg-slate-800/50 backdrop-blur-xl shadow-xl">
+            <CardHeader className="space-y-2">
+              <CardTitle className="text-white">Welcome Back</CardTitle>
+              <CardDescription className="text-slate-400">
+                Sign in to manage your finances
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Login user={user} />
+            </CardContent>
+          </Card>
+
+          {/* Features */}
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center p-3 rounded-lg bg-slate-700/30 border border-slate-700">
+              <p className="text-2xl font-bold text-indigo-400">30+</p>
+              <p className="text-xs text-slate-400 mt-1">Features</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-slate-700/30 border border-slate-700">
+              <p className="text-2xl font-bold text-pink-400">100%</p>
+              <p className="text-xs text-slate-400 mt-1">Free</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-slate-700/30 border border-slate-700">
+              <p className="text-2xl font-bold text-cyan-400">🔒</p>
+              <p className="text-xs text-slate-400 mt-1">Secure</p>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <p className="text-center text-xs text-slate-500">
+            Track • Analyze • Grow your wealth
+          </p>
         </div>
-        <h1 className="text-3xl font-bold mb-2">TechieFin</h1>
-        <p className="text-gray-400 mb-8 text-center">Your personal finance manager</p>
-        <Login user={user} />
       </main>
     );
   }
 
   return (
-    <main className="max-w-xl mx-auto pb-24">
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {/* Header with Profile */}
       {activeTab !== "profile" && (
-        <div
-          className="p-6 mb-4"
-          style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899)" }}
-        >
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <p className="text-purple-200 text-sm">Welcome back!</p>
-              <p className="text-xl font-bold">{user.displayName} 👋</p>
+        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 pt-6 pb-8 px-4 rounded-b-3xl shadow-lg">
+          <div className="max-w-xl mx-auto">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-indigo-100 text-sm">Welcome back 👋</p>
+                <p className="text-2xl font-bold text-white">{user.displayName}</p>
+              </div>
+              <button
+                onClick={() => setActiveTab("profile")}
+                className="ring-2 ring-white/30 hover:ring-white/50 rounded-full transition-all"
+              >
+                <img
+                  src={user.photoURL}
+                  alt="profile"
+                  className="w-12 h-12 rounded-full"
+                />
+              </button>
             </div>
-            <img
-              src={user.photoURL}
-              alt="profile"
-              className="w-12 h-12 rounded-full border-2 border-white cursor-pointer"
-              onClick={() => setActiveTab("profile")}
-            />
           </div>
-          <Summary transactions={transactions} />
         </div>
       )}
 
-      <div className="px-4">
-        <DailyTips />
+      {/* Main Content */}
+      <div className="max-w-xl mx-auto px-4 py-6 pb-32">
+        {/* Navigation Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-6">
+          <TabsList className="grid w-full grid-cols-5 bg-slate-700/50 border border-slate-600">
+            <TabsTrigger value="home" className="text-xs">🏠</TabsTrigger>
+            <TabsTrigger value="analytics" className="text-xs">📊</TabsTrigger>
+            <TabsTrigger value="tools" className="text-xs">🛠️</TabsTrigger>
+            <TabsTrigger value="goals" className="text-xs">🎯</TabsTrigger>
+            <TabsTrigger value="profile" className="text-xs">👤</TabsTrigger>
+          </TabsList>
 
-        {activeTab === "home" && (
-          <>
+          {/* Home Tab */}
+          <TabsContent value="home" className="space-y-4">
+            <Summary transactions={transactions} />
+            <DailyTips />
             <BudgetAlert transactions={transactions} />
+            <FinancialCalendar transactions={transactions} />
             <NewsFeed />
             <Chatbot transactions={transactions} />
             <AddTransaction onAdd={() => fetchTransactions(user)} user={user} />
             <RecurringTransactions user={user} onAdd={() => fetchTransactions(user)} />
             <TransactionList transactions={transactions} onDelete={() => fetchTransactions(user)} />
-          </>
-        )}
+          </TabsContent>
 
-        {activeTab === "analytics" && (
-          <>
+          {/* Analytics Tab */}
+          <TabsContent value="analytics" className="space-y-4">
             <Statistics transactions={transactions} />
+            <RiskAnalyzer transactions={transactions} />
+            <SecurityScore transactions={transactions} />
             <Achievements transactions={transactions} />
+            <FinancialCoach transactions={transactions} />
             <NetWorth />
             <CashbackTracker />
+            <BusinessTracker />
+            <MarketOverview />
             <MonthlyReport transactions={transactions} />
             <SpendingInsights transactions={transactions} />
             <CarbonFootprint transactions={transactions} />
@@ -140,52 +210,35 @@ export default function Home() {
             <FuturePredictor transactions={transactions} />
             <AIAdvice transactions={transactions} />
             <ExportPDF transactions={transactions} />
-          </>
-        )}
+          </TabsContent>
 
-        {activeTab === "tools" && (
-          <>
+          {/* Tools Tab */}
+          <TabsContent value="tools" className="space-y-4">
+            <SalaryNegotiation />
             <TaxCalculator />
             <CurrencyConverter />
             <EMICalculator />
+            <ExpenseSplitter />
             <SplitBill />
             <MoodTracker />
             <BillReminders />
             <SupplyChain />
             <DemandPlanner />
-          </>
-        )}
+          </TabsContent>
 
-        {activeTab === "goals" && (
-          <>
+          {/* Goals Tab */}
+          <TabsContent value="goals" className="space-y-4">
             <GoalTracker />
             <SavingsChallenge />
             <Accounts transactions={transactions} />
             <ReferFriend user={user} />
-          </>
-        )}
+          </TabsContent>
 
-        {activeTab === "profile" && (
-          <Profile user={user} transactions={transactions} />
-        )}
-      </div>
-
-      <div
-        className="fixed bottom-0 left-0 right-0 flex justify-around items-center p-3 z-50"
-        style={{ backgroundColor: "#111827", borderTop: "1px solid #1f2937" }}
-      >
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className="flex flex-col items-center gap-1"
-          >
-            <span className="text-2xl">{tab.icon}</span>
-            <span className={`text-xs font-semibold ${activeTab === tab.id ? "text-purple-400" : "text-gray-500"}`}>
-              {tab.label}
-            </span>
-          </button>
-        ))}
+          {/* Profile Tab */}
+          <TabsContent value="profile">
+            <Profile user={user} transactions={transactions} />
+          </TabsContent>
+        </Tabs>
       </div>
     </main>
   );
